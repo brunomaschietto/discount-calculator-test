@@ -1,3 +1,6 @@
+import math
+
+
 def calculator(consumption: list, distributor_tax: float, tax_type: str) -> tuple:
     """
     returns a tuple of floats contained anual savings, monthly savings, applied_discount and coverage
@@ -8,17 +11,56 @@ def calculator(consumption: list, distributor_tax: float, tax_type: str) -> tupl
     coverage = 0
 
     # your code here #
+    discount = 0
+    if max(consumption) < 10000:
+        if tax_type == "Residencial":
+            discount = 0.18
+        elif tax_type == "Comercial":
+            discount = 0.16
+        elif tax_type == "Industrial":
+            discount = 0.12
+    elif 10000 <= max(consumption) <= 20000:
+        if tax_type == "Residencial":
+            discount = 0.22
+        elif tax_type == "Comercial":
+            discount = 0.18
+        elif tax_type == "Industrial":
+            discount = 0.15
+    elif max(consumption) > 20000:
+        if tax_type == "Residencial":
+            discount = 0.25
+        elif tax_type == "Comercial":
+            discount = 0.22
+        elif tax_type == "Industrial":
+            discount = 0.18
+
+    # Calculate the applied discount and monthly savings
+    total_consumption = sum(consumption)
+    applied_discount = discount * total_consumption
+    monthly_savings = applied_discount / 12
+
+    # Calculate the annual savings and coverage based on the discount and tariff values
+    annual_savings = applied_discount * 12
+    coverage = 0.9
+    if total_consumption >= 10000 and total_consumption <= 20000:
+        coverage = 0.95
+    elif total_consumption > 20000:
+        coverage = 0.99
+    annual_savings *= coverage
 
     return (
         round(annual_savings, 2),
         round(monthly_savings, 2),
-        applied_discount,
-        coverage,
+        round(applied_discount, 2),
+        round(coverage, 2),
     )
 
 
 if __name__ == "__main__":
     print("Testing...")
+    result = calculator([1518, 1071, 968], 0.95871974, "Industrial")
+    print(result)
+    assert round(result[2], 2) == 426.84
 
     assert calculator([1518, 1071, 968], 0.95871974, "Industrial") == (
         1473.19,
